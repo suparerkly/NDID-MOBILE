@@ -14,6 +14,7 @@ This repo has five test layers. Each has a reason to exist; when adding coverage
 | Widget | `test/widget_test.dart` | `flutter test` | Single screens in isolation. |
 | Contract | `test/contract/server_contract_test.dart` | `./tool/test_contract.sh` | The app's real `HttpAppApi` + `AppState` against the real server and a real SQLite DB. Skipped by plain `flutter test` (no `API_BASE_URL`). |
 | Server API | `server/test/api.test.js` | `npm --prefix server test` | Every endpoint with `node:test` + `fetch`, app started in-process from `server/src/app.js`. |
+| Browser (Playwright) | `e2e-web/tests/flow.spec.mjs` | `./tool/test_web.sh` | The Flutter **web build** in real Chromium against the real server + temp SQLite, with a screenshot at every step. Cases W1–W4. |
 
 `integration_test/` needs an emulator or device with a camera; it can't run in a headless container. Say so rather than skipping silently.
 
@@ -50,6 +51,12 @@ If you need a DB for anything new, wrap it with `with-test-db.js` too.
 Read `references/e2e-patterns.md` before adding or changing a test in `test/e2e/`. It covers the gotchas that cost time: mocking the camera and ML Kit channels, why `pumpAndSettle` hangs on the face-scan screen, the date-picker input, the tall test screen, and the reusable helpers (`verify`, `openPurchase`, `consentAndFillForm`, `pumpFor`, `tapAndSettle`, `chooseDropdown`, `pickBirthDate`).
 
 Keep the case IDs (A/B/C + number) in the test names. The report and the flow map refer to them.
+
+## Browser tests with Playwright (Flutter web)
+
+Use this layer when the user mentions Playwright or a browser, wants screenshots/captures of the flow, or a change touches the web build (`face_scan_screen_web.dart`, web layout, CORS). Read `references/playwright-web.md` before writing or debugging a case. Flutter web only exposes an accessibility DOM, which needs a desktop-mode viewport. Real mouse clicks get intercepted during animations, so use the `press`/`tap`/`typeInto`/`navTile`/`text` helpers in `e2e-web/tests/helpers.mjs`.
+
+For a capture artifact ("capture ลง artifact", ภาพหน้าจอ), run `./tool/test_web.sh`, then `scripts/build_web_report.py`, and publish the HTML it writes. The reference covers the flags.
 
 ## Writing server and contract tests
 

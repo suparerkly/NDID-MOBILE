@@ -1,0 +1,179 @@
+<title>NDID Web Playwright Run</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anuphan:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: report column; each test is a contact sheet of phone-sized captures in run order */
+:root {
+  --bg: #f5f6f8; --surface: #ffffff; --ink: #14171f; --muted: #5d6573; --line: #e3e6ec;
+  --accent: #2447d8; --accent-soft: #eef1fd; --pass: #0f8a45; --pass-soft: #e7f5ed;
+  --fail: #c62f2f; --fail-soft: #fdf1f1; --code-bg: #eceef3; --scrim: rgba(12, 14, 20, 0.86);
+  --f-display: "Anuphan", "IBM Plex Sans Thai", "Noto Sans Thai", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans Thai", "Noto Sans Thai", "Leelawadee UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --radius: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1218; --surface: #171b23; --ink: #e8ebf1; --muted: #9aa3b2; --line: #272d38;
+    --accent: #8ea4ff; --accent-soft: #1c2440; --pass: #4cc584; --pass-soft: #12291d;
+    --fail: #ff7a7a; --fail-soft: #2d1616; --code-bg: #1f2430; --scrim: rgba(0, 0, 0, 0.88); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1218; --surface: #171b23; --ink: #e8ebf1; --muted: #9aa3b2; --line: #272d38;
+  --accent: #8ea4ff; --accent-soft: #1c2440; --pass: #4cc584; --pass-soft: #12291d;
+  --fail: #ff7a7a; --fail-soft: #2d1616; --code-bg: #1f2430; --scrim: rgba(0, 0, 0, 0.88); color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15.5px; line-height: 1.7;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1040px; margin: 0 auto; padding-block: 40px 72px; display: grid; gap: 48px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; line-height: 1.3; margin: 0; }
+h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 700; }
+h2 { font-size: 23px; font-weight: 600; }
+h3 { font-size: 17px; font-weight: 600; }
+p { margin: 0; max-width: 68ch; }
+.mono, code { font-family: var(--f-mono); font-size: 0.86em; }
+code { background: var(--code-bg); padding: 1px 6px; border-radius: 6px; overflow-wrap: anywhere; }
+.muted { color: var(--muted); }
+.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+header { display: grid; gap: 14px; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px 18px; color: var(--muted); font-size: 13.5px; }
+.meta b { color: var(--ink); font-weight: 500; font-family: var(--f-mono); font-size: 12.5px; }
+section { display: grid; gap: 16px; min-width: 0; }
+
+.verdict { display: grid; grid-template-columns: auto 1fr; gap: 22px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px 24px; }
+.seal { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; }
+.verdict.pass .seal { background: var(--pass-soft); color: var(--pass); }
+.verdict.fail .seal { background: var(--fail-soft); color: var(--fail); }
+.verdict.pass .seal .x, .verdict.fail .seal .ok { display: none; }
+.big { font-family: var(--f-display); font-size: 22px; font-weight: 600; }
+.stats { display: flex; flex-wrap: wrap; gap: 10px 28px; margin-top: 8px; }
+.stat { display: grid; }
+.stat .n { font-family: var(--f-display); font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.stat .l { font-size: 12.5px; color: var(--muted); }
+.navchips { display: flex; flex-wrap: wrap; gap: 8px; }
+.navchip { font-family: var(--f-mono); font-size: 13px; font-weight: 500; padding: 3px 12px; border-radius: 999px; text-decoration: none; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.navchip.pass::before, .navchip.fail::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 7px; vertical-align: 1px; }
+.navchip.pass::before { background: var(--pass); }
+.navchip.fail::before { background: var(--fail); }
+
+.test { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; gap: 14px; scroll-margin-top: 16px; }
+.test-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 12px; }
+.test-head h3 { flex: 1 1 260px; min-width: 0; }
+.code { font-family: var(--f-mono); font-size: 13px; font-weight: 500; color: var(--surface); background: var(--accent); padding: 1px 8px; border-radius: 6px; }
+.dur { color: var(--muted); font-size: 12.5px; }
+.pill { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+.pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.pill.pass { background: var(--pass-soft); color: var(--pass); }
+.pill.fail { background: var(--fail-soft); color: var(--fail); }
+.shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px 12px; }
+.shot { margin: 0; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.zoom { padding: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--bg); cursor: zoom-in; display: block; width: 100%; }
+.zoom img { display: block; width: 100%; height: auto; aspect-ratio: 412 / 915; object-fit: cover; object-position: top; }
+.zoom:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+figcaption { font-size: 12.5px; line-height: 1.45; display: flex; gap: 6px; }
+figcaption .n { font-family: var(--f-mono); color: var(--muted); flex: none; }
+.err { margin: 0; background: var(--fail-soft); color: var(--fail); border-radius: 10px; padding: 12px 14px; overflow-x: auto; font-family: var(--f-mono); font-size: 12.5px; white-space: pre-wrap; }
+
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; display: grid; gap: 6px; align-content: start; }
+.card p { font-size: 14px; color: var(--muted); }
+.mut-row { display: grid; grid-template-columns: 34px 1fr auto; gap: 14px; align-items: start; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; }
+.mut-row div { display: grid; gap: 2px; min-width: 0; }
+.mut-row small { color: var(--muted); font-size: 13px; }
+.mut-row .k { color: var(--muted); font-weight: 500; }
+pre.cmd { margin: 0; background: var(--code-bg); border-radius: 10px; padding: 12px 14px; overflow-x: auto; font-family: var(--f-mono); font-size: 13px; }
+
+dialog { border: 0; padding: 0; background: transparent; max-width: min(92vw, 460px); max-height: 92vh; }
+dialog::backdrop { background: var(--scrim); }
+dialog img { display: block; max-width: 100%; max-height: 86vh; height: auto; border-radius: 14px; }
+dialog p { color: #f2f4f8; text-align: center; font-size: 14px; margin: 10px auto 0; }
+dialog .close { position: absolute; top: 8px; right: 8px; border: 0; border-radius: 999px; background: rgba(20, 23, 31, 0.7); color: #fff; width: 36px; height: 36px; font-size: 18px; cursor: pointer; }
+footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 18px; }
+@media (max-width: 560px) {
+  .verdict { grid-template-columns: 1fr; }
+  .shots { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mut-row { grid-template-columns: 28px 1fr; }
+  .mut-row .pill { grid-column: 2; justify-self: start; }
+}
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Playwright · Chromium · Flutter web</div>
+  <h1>ภาพจากการทดสอบ flow บนเบราว์เซอร์</h1>
+  <p class="muted">Playwright เปิดแอปเวอร์ชันเว็บใน Chromium ขนาดจอมือถือ กดผ่านทุกขั้นเหมือนผู้ใช้จริง คุยกับเซิร์ฟเวอร์จำลองและฐานข้อมูล SQLite จริง แล้วถ่ายภาพหน้าจอทุกขั้น กดที่ภาพเพื่อดูขนาดเต็ม</p>
+  <div class="meta">{{META}}</div>
+</header>
+
+<div class="verdict {{VERDICT_CLASS}}" role="status">
+  <div class="seal" aria-hidden="true">
+    <svg class="ok" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+    <svg class="x" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </div>
+  <div>
+    <div class="big">{{VERDICT}}</div>
+    <div class="stats">
+      <div class="stat"><span class="n">{{PASSED}}</span><span class="l">ผ่าน</span></div>
+      <div class="stat"><span class="n">{{FAILED}}</span><span class="l">ไม่ผ่าน</span></div>
+      <div class="stat"><span class="n">{{FLAKY}}</span><span class="l">ไม่เสถียร (flaky)</span></div>
+      <div class="stat"><span class="n">{{SHOTS}}</span><span class="l">ภาพหน้าจอ</span></div>
+      <div class="stat"><span class="n">{{DURATION}}</span><span class="l">วินาทีทั้งหมด</span></div>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="eyebrow">กรณีทดสอบ</div>
+  <nav class="navchips" aria-label="ไปยังกรณีทดสอบ">{{NAV}}</nav>
+  {{TESTS}}
+</section>
+
+<section {{MUTATIONS_HIDDEN}}>
+  <div class="eyebrow">ตรวจว่าเทสต์จับบั๊กได้จริง</div>
+  <h2>ใส่บั๊กทดลองในแอป แล้ว build เว็บใหม่และรันซ้ำ</h2>
+  {{MUTATIONS}}
+</section>
+
+<section {{FINDINGS_HIDDEN}}>
+  <div class="eyebrow">ข้อสังเกต</div>
+  <h2>สิ่งที่พบระหว่างทดสอบบนเบราว์เซอร์</h2>
+  <div class="grid2">{{FINDINGS}}</div>
+</section>
+
+<section>
+  <div class="eyebrow">วิธีรัน</div>
+  <h2>รันชุดนี้เอง</h2>
+  <p class="muted">สคริปต์ build เว็บให้ชี้ไปที่เซิร์ฟเวอร์เทสต์ เปิดเซิร์ฟเวอร์กับฐานข้อมูลชั่วคราว แล้วรัน Playwright ภาพจะอยู่ที่ <code>e2e-web/test-results/artifacts/</code></p>
+  <pre class="cmd">./tool/test_web.sh</pre>
+</section>
+
+<footer>แอปนี้เป็นการจำลองเพื่อสาธิต ไม่ได้เชื่อมต่อระบบ NDID จริง ข้อมูลในภาพเป็นข้อมูลทดสอบทั้งหมด</footer>
+</div>
+
+<dialog id="viewer" aria-label="ภาพหน้าจอขนาดเต็ม">
+  <button class="close" type="button" aria-label="ปิด">✕</button>
+  <img id="viewer-img" alt="">
+  <p id="viewer-cap"></p>
+</dialog>
+<script>
+(() => {
+  const dlg = document.getElementById('viewer');
+  const img = document.getElementById('viewer-img');
+  const cap = document.getElementById('viewer-cap');
+  document.querySelectorAll('.zoom').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const src = btn.querySelector('img');
+      img.src = src.src; img.alt = src.alt; cap.textContent = src.alt;
+      if (dlg.showModal) dlg.showModal();
+    });
+  });
+  dlg.addEventListener('click', (e) => { if (e.target === dlg || e.target.classList.contains('close')) dlg.close(); });
+})();
+</script>

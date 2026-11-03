@@ -86,6 +86,7 @@ flutter build web --release
 | E2E flow | `test/e2e/` | ทุก flow ผ่าน UI จริง ตั้งแต่ยินยอมจนซื้อประกัน ดูกรมธรรม์ และออกจากระบบ รวมกรณีผิดพลาด |
 | Contract | `test/contract/` | แอป (`HttpAppApi`) คุยกับเซิร์ฟเวอร์จริง + Prisma + SQLite |
 | Server API | `server/test/` | ทุก endpoint ของเซิร์ฟเวอร์ รวมกรณีข้อมูลผิด อายุไม่ถึงเกณฑ์ และไม่พบข้อมูล |
+| Browser (Playwright) | `e2e-web/` | แอปเวอร์ชันเว็บใน Chromium คุยกับเซิร์ฟเวอร์จริง ถ่ายภาพหน้าจอทุกขั้น |
 
 รันเทสต์ฝั่งแอป (unit, widget และ E2E flow)
 
@@ -103,6 +104,12 @@ flutter test
 
 ```bash
 npm --prefix server test
+```
+
+รันเทสต์บนเบราว์เซอร์ด้วย Playwright (build เว็บ เปิดเซิร์ฟเวอร์กับฐานข้อมูลชั่วคราว แล้วรันใน Chromium ภาพหน้าจออยู่ที่ `e2e-web/test-results/artifacts/`)
+
+```bash
+./tool/test_web.sh
 ```
 
 ใน E2E flow เครื่องเทสต์ไม่มีกล้อง จึงใช้ปุ่ม "ข้ามการสแกน" ที่มีเฉพาะ debug build ส่วนตรรกะตรวจใบหน้าทดสอบแยกใน `test/unit/liveness_checker_test.dart` การทดสอบกับกล้องจริงใช้ `integration_test/` บนอีมูเลเตอร์หรือเครื่องจริง

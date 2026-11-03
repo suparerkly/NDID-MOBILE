@@ -1,0 +1,11 @@
+{
+  "name": "ndid-e2e-web",
+  "private": true,
+  "description": "Playwright E2E tests of the Flutter web build against the real mock server",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0"
+  }
+}
