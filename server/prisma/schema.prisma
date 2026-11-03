@@ -7,7 +7,8 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
+  // ค่าเริ่มต้นอยู่ใน server/.env เทสต์ใช้ฐานข้อมูลชั่วคราวแยก (scripts/with-test-db.js)
+  url      = env("DATABASE_URL")
 }
 
 /// ผู้ใช้ที่ยืนยันตัวตนแล้ว ระบุตัวด้วยเลขบัตรประชาชน
