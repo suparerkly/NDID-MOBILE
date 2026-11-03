@@ -1,0 +1,6 @@
+# คัดลอกไฟล์นี้เป็น android/key.properties แล้วใส่ค่าจริง ห้าม commit ไฟล์ key.properties และไฟล์ keystore
+# storeFile เป็น path เทียบกับโฟลเดอร์ android/
+storeFile=upload-keystore.jks
+storePassword=
+keyAlias=upload
+keyPassword=

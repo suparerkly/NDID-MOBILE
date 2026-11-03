@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<title>NDID Verify LOSE Screen Flow</title>
+<style>
+  :root {
+    --ground: #f1f2f5; --ink: #14171f; --muted: #626a78; --line: #dfe2e8;
+    --accent: #2447d8; --accent-soft: #e6eafb; --warn: #b4442b; --ok: #0f8a45;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { width: 2500px; background: var(--ground); color: var(--ink);
+    font-family: "Leelawadee UI", "Noto Sans Thai", Tahoma, sans-serif; }
+  body:has(section:target) section:not(:target) { display: none; }
+  header { height: 210px; padding: 64px 80px 0; }
+  h1 { margin: 0; font-size: 52px; line-height: 1.2; font-weight: 700; }
+  header p { margin: 8px 0 0; font-size: 22px; color: var(--muted); }
+  section { height: 1290px; padding: 0 80px; }
+  section + section { border-top: 2px solid var(--line); padding-top: 44px; height: 1334px; }
+  section:target { border-top: 0; padding-top: 0; }
+  h2 { margin: 0 0 26px; font-size: 36px; line-height: 1.3; font-weight: 700; display: flex; gap: 16px; align-items: baseline; }
+  h2 small { font-size: 21px; font-weight: 400; color: var(--muted); }
+  .grid { display: grid; grid-template-columns: repeat(6, 240px 110px) 240px; }
+  .screen { display: flex; flex-direction: column; }
+  .tag { font-size: 16px; font-weight: 700; color: var(--accent); line-height: 22px; }
+  .name { font-size: 20px; font-weight: 700; line-height: 30px; height: 34px; white-space: nowrap; }
+  img { display: block; width: 100%; aspect-ratio: 1080 / 2400; background: #fff;
+    border: 1px solid var(--line); border-radius: 26px; box-shadow: 0 10px 28px rgba(20, 23, 31, .10); }
+  .desc { margin: 14px 0 0; font-size: 15.5px; line-height: 23px; color: var(--muted); height: 70px; }
+  .arrow { position: relative; height: 590px; }
+  .arrow svg { position: absolute; left: 14px; top: 330px; width: 82px; height: 14px; }
+  .arrow span { position: absolute; left: 0; right: 0; top: 276px; font-size: 14.5px; line-height: 20px; text-align: center; font-weight: 600; }
+  .branch { display: flex; flex-direction: column; align-items: center; width: 240px; }
+  .dash { width: 0; height: 28px; border-left: 2px dashed var(--warn); }
+  .branch .why { font-size: 15px; font-weight: 700; color: var(--warn); line-height: 22px; margin-bottom: 8px; text-align: center; }
+  .branch img { width: 160px; border-radius: 18px; }
+  .branch p { margin: 10px 0 0; font-size: 14.5px; line-height: 21px; color: var(--muted); text-align: center; }
+  .note { align-self: start; background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 24px 28px; font-size: 18px; line-height: 30px; }
+  .note b { display: block; font-size: 20px; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>NDID Verify LOSE: ภาพหน้าจอตาม Flow</h1>
+  <p>ภาพจากแอปจริงบนอีมูเลเตอร์ Android ทุกขั้นตอนเป็นการจำลอง ไม่ได้เชื่อมต่อระบบ NDID จริง</p>
+</header>
+
+<section id="a">
+  <h2>A · ยืนยันตัวตน <small>จากหน้าเริ่มต้นถึง popup สำเร็จ</small></h2>
+  <div class="grid">
+    <div class="screen"><span class="tag">A1</span><span class="name">หน้าเริ่มต้น</span><img src="screens/a1_welcome.png" alt="หน้าเริ่มต้น"><p class="desc">อธิบาย 3 ขั้นตอนและแจ้งว่าเป็นการจำลอง</p></div>
+    <div class="arrow"><span>ติ๊กยินยอม<br>กดเริ่ม</span><svg viewBox="0 0 82 14" aria-hidden="true"><path d="M0 7H74" stroke="#14171f" stroke-width="2.5"/><path d="M72 1l10 6-10 6z" fill="#14171f"/></svg></div>
+    <div class="screen"><span class="tag">A2</span><span class="name">ข้อมูลส่วนตัว</span><img src="screens/a3_form_empty.png" alt="ฟอร์มข้อมูลส่วนตัวว่าง"><p class="desc">กรอกเองหรือกดกรอกข้อมูลตัวอย่าง</p></div>
+    <div class="arrow"><span>กรอก<br>ครบ</span><svg viewBox="0 0 82 14" aria-hidden="true"><path d="M0 7H74" stroke="#14171f" stroke-width="2.5"/><path d="M72 1l10 6-10 6z" fill="#14171f"/></svg></div>
+    <div class="screen"><span class="tag">A3</span><span class="name">ข้อมูลตัวอย่าง</span><img src="screens/a5_form_filled.png" alt="ฟอร์มที่กรอกข้อมูลตัวอย่างแล้ว"><p class="desc">ข้อมูลผ่านการตรวจทุกช่อง</p></div>
+    <div class="arrow"><span>กด<br>ถัดไป</span><svg viewBox="0 0 82 14" aria-hidden="true"><path d="M0 7H74" stroke="#14171f" stroke-width="2.5"/><path d="M72 1l10 6-10 6z" fill="#14171f"/></svg></div>
+    <div class="screen"><span class="tag">A4</span><span class="name">เลือกผู้ยืนยัน</span><img src="screens/a7_provider_selected.png" alt="เลือกธนาคารสมมติ"><p class="desc">เลือกธนาคารสมมติ มีตัวเลือกให้ตั้งแต่ต้น</p></div>
+    <div class="arrow"><span>กด<br>ถัดไป</span><svg viewBox="0 0 82 14" aria-hidden="true"><path d="M0 7H74" stroke="#14171f" stroke-width="2.5"/><path d="M72 1l10 6-10 6z" fill="#14171f"/></svg></div>
+    <div class="screen"><span class="tag">A5</span><span class="name">สแกนใบหน้า</span><img src="screens/a8_face_scan.png" alt="หน้าสแกนใบหน้า"><p class="desc">ภาพกล้องจำลองของอีมูเลเตอร์ จึงไม่พบใบหน้า ปุ่มข้ามมีเฉพาะ debug build</p></div>
+    <div class="arrow"><span>ผ่าน<br>3 ขั้น</span><svg viewBox="0 0 82 14" aria-hidden="true"><path d="M0 7H74" stroke="#14171f" stroke-width="2.5"/><path d="M72 1l10 6-10 6z" fill="#14171f"/></svg></div>
+    <div class="screen"><span class="tag">A6</span><span class="name">ส่งคำขอจำลอง</span><img src="screens/a9_face_submitting.png" alt="กำลังส่งคำขอยืนยันตัวตน"><p class="desc">ปิดกล้องแล้วรอผลจำลอง 2 วินาที</p></div>
+    <div class="arrow"><span>ได้<br>ผลจำลอง</span><svg viewBox="0 0 82 14" aria-hidden="true"><path d="M0 7H74" stroke="#14171f" stroke-width="2.5"/><path d="M72 1l10 6-10 6z" fill="#14171f"/></svg></div>
+    <div class="screen"><span class="tag">A7</span><span class="name">Popup สำเร็จ</span><img src="screens/a10_success_popup.png" alt="popup ยืนยันตัวตนสำเร็จ"><p class="desc">กดไปที่เมนูประกันเพื่อเข้าหน้า B1</p></div>
+
+    <div class="branch"><div class="dash"></div><span class="why">เมื่อติ๊กยินยอม</span><img src="screens/a2_welcome_consented.png" alt="หน้าเริ่มต้นเมื่อติ๊กยินยอม"><p>ปุ่มเริ่มจึงกดได้</p></div>
+    <div></div>
+    <div class="branch"><div class="dash"></div><span class="why">เมื่อข้อมูลไม่ครบ</span><img src="screens/a4_form_errors.png" alt="ฟอร์มแสดงข้อผิดพลาด"><p>แจ้งที่ช่อง และ error หายเมื่อแก้แล้ว</p></div>
+  </div>
+</section>
+
+<section id="b">
+  <h2>B · ซื้อประกัน <small>จากเมนูหลักถึงกรมธรรม์จำลอง</small></h2>
+  <div class="grid">
+    <div class="screen"><span class="tag">B1</span><span class="name">เมนูหลัก</span><img src="screens/b1_home.png" alt="เมนูหลัก"><p class="desc">ทักทายและแสดงว่ายืนยันตัวตนแล้ว (จำลอง)</p></div>
+    <div class="arrow"><span>ซื้อประกัน<br>ออนไลน์</span><svg viewBox="0 0 82 14" aria-hidden="true"><path d="M0 7H74" stroke="#14171f" stroke-width="2.5"/><path d="M72 1l10 6-10 6z" fill="#14171f"/></svg></div>
+    <div class="screen"><span class="tag">B2</span><span class="name">เลือกแบบประกัน</span><img src="screens/b2_plans.png" alt="รายการแบบประกัน"><p class="desc">3 แบบตัวอย่าง ตรวจอายุกับเกณฑ์ของแต่ละแบบ</p></div>
+    <div class="arrow"><span>กด<br>ซื้อแบบนี้</span><svg viewBox="0 0 82 14" aria-hidden="true"><path d="M0 7H74" stroke="#14171f" stroke-width="2.5"/><path d="M72 1l10 6-10 6z" fill="#14171f"/></svg></div>
+    <div class="screen"><span class="tag">B3</span><span class="name">สมัครและชำระเงิน</span><img src="screens/b4_purchase_top.png" alt="หน้าสมัครประกัน"><p class="desc">ระบุผู้รับผลประโยชน์และวิธีชำระเงินจำลอง</p></div>
+    <div class="arrow"><span>กรอก<br>ครบ</span><svg viewBox="0 0 82 14" aria-hidden="true"><path d="M0 7H74" stroke="#14171f" stroke-width="2.5"/><path d="M72 1l10 6-10 6z" fill="#14171f"/></svg></div>
+    <div class="screen"><span class="tag">B4</span><span class="name">ข้อมูลครบ</span><img src="screens/b6_purchase_filled.png" alt="หน้าสมัครที่กรอกครบแล้ว"><p class="desc">ติ๊กเงื่อนไขแล้วกดชำระเงิน</p></div>
+    <div class="arrow"><span>กด<br>ชำระเงิน</span><svg viewBox="0 0 82 14" aria-hidden="true"><path d="M0 7H74" stroke="#14171f" stroke-width="2.5"/><path d="M72 1l10 6-10 6z" fill="#14171f"/></svg></div>
+    <div class="screen"><span class="tag">B5</span><span class="name">ยืนยันการชำระ</span><img src="screens/b7_confirm.png" alt="กล่องยืนยันการชำระเงิน"><p class="desc">แจ้งว่าไม่มีการตัดเงินจริง กดยกเลิกเพื่อกลับไปแก้ได้</p></div>
+    <div class="arrow"><span>กด<br>ยืนยัน</span><svg viewBox="0 0 82 14" aria-hidden="true"><path d="M0 7H74" stroke="#14171f" stroke-width="2.5"/><path d="M72 1l10 6-10 6z" fill="#14171f"/></svg></div>
+    <div class="screen"><span class="tag">B6</span><span class="name">ซื้อสำเร็จ</span><img src="screens/b8_purchased.png" alt="หน้าซื้อประกันสำเร็จ"><p class="desc">กรมธรรม์จำลอง กดกลับเมนูหลักเพื่อไปหน้า C1</p></div>
+    <div></div>
+    <div></div>
+
+    <div></div>
+    <div></div>
+    <div class="branch"><div class="dash"></div><span class="why">เมื่อกางแบบอื่น</span><img src="screens/b3_plan_expanded.png" alt="การ์ดแบบประกันที่กางออก"><p>กางดูทีละแบบ</p></div>
+    <div></div>
+    <div class="branch"><div class="dash"></div><span class="why">เมื่อข้อมูลไม่ครบ</span><img src="screens/b5_purchase_errors.png" alt="หน้าสมัครแสดงข้อผิดพลาด"><p>แจ้งเตือนชื่อและเงื่อนไข</p></div>
+  </div>
+</section>
+
+<section id="c">
+  <h2>C · ดูกรมธรรม์ <small>ดูกรมธรรม์ที่ซื้อแล้วจากเมนูหลัก</small></h2>
+  <div class="grid">
+    <div class="screen"><span class="tag">C1</span><span class="name">เมนูหลัก</span><img src="screens/c1_home_with_policy.png" alt="เมนูหลักเมื่อมีกรมธรรม์"><p class="desc">แสดงจำนวนกรมธรรม์ ปุ่มมุมขวาบนออกจากระบบและล้างข้อมูล</p></div>
+    <div class="arrow"><span>กรมธรรม์<br>ของฉัน</span><svg viewBox="0 0 82 14" aria-hidden="true"><path d="M0 7H74" stroke="#14171f" stroke-width="2.5"/><path d="M72 1l10 6-10 6z" fill="#14171f"/></svg></div>
+    <div class="screen"><span class="tag">C2</span><span class="name">กรมธรรม์ของฉัน</span><img src="screens/c2_policies.png" alt="รายการกรมธรรม์"><p class="desc">รายการที่ซื้อในรอบการใช้งานนี้</p></div>
+    <div class="arrow"><span>เลือก<br>ฉบับ</span><svg viewBox="0 0 82 14" aria-hidden="true"><path d="M0 7H74" stroke="#14171f" stroke-width="2.5"/><path d="M72 1l10 6-10 6z" fill="#14171f"/></svg></div>
+    <div class="screen"><span class="tag">C3</span><span class="name">รายละเอียดกรมธรรม์</span><img src="screens/c3_policy_detail.png" alt="รายละเอียดกรมธรรม์"><p class="desc">เอกสารจำลอง ไม่มีผลทางกฎหมาย</p></div>
+    <div></div>
+    <div class="note" style="grid-column: 7 / span 7"><b>สิ่งที่ภาพชุดนี้ไม่ได้แสดง</b>การสแกนใบหน้าที่ผ่านด้วยใบหน้าจริง เพราะกล้องของอีมูเลเตอร์ไม่มีใบหน้าให้ตรวจ ภาพ A6 และ A7 จึงได้จากปุ่มข้ามของ debug build<br>ข้อมูลทั้งหมดในภาพเป็นข้อมูลตัวอย่าง ข้อมูลในแอปอยู่ในหน่วยความจำและหายเมื่อปิดแอป</div>
+    <div></div>
+    <div></div>
+    <div class="branch"><div class="dash"></div><span class="why">เมื่อยังไม่มีกรมธรรม์</span><img src="screens/c0_policies_empty.png" alt="หน้ากรมธรรม์เมื่อยังไม่มีรายการ"><p>แสดงข้อความว่าง</p></div>
+  </div>
+</section>
+</body>
+</html>

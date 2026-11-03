@@ -1,0 +1,14 @@
+# สร้างไอคอนใหม่ด้วย: dart run flutter_launcher_icons
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: store_listing/graphics/icon_1024.png
+  remove_alpha_ios: true
+  adaptive_icon_background: "#2447D8"
+  adaptive_icon_foreground: store_listing/graphics/icon_foreground_1024.png
+  min_sdk_android: 21
+  web:
+    generate: true
+    image_path: store_listing/graphics/icon_1024.png
+    background_color: "#FFFFFF"
+    theme_color: "#2447D8"

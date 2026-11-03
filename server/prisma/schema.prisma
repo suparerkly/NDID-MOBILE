@@ -1,0 +1,84 @@
+// โครงสร้างฐานข้อมูลจำลองของ NDID Verify LOSE
+// ข้อมูลทั้งหมดเป็นข้อมูลตัวอย่าง เก็บใน SQLite ไฟล์ prisma/dev.db
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+/// ผู้ใช้ที่ยืนยันตัวตนแล้ว ระบุตัวด้วยเลขบัตรประชาชน
+model User {
+  id            Int            @id @default(autoincrement())
+  title         String
+  firstName     String
+  lastName      String
+  citizenId     String         @unique
+  birthDate     DateTime
+  phone         String
+  email         String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  verifications Verification[]
+  policies      Policy[]
+}
+
+/// ผลการยืนยันตัวตนจำลองจากผู้ให้บริการสมมติ
+model Verification {
+  id          Int      @id @default(autoincrement())
+  referenceId String   @unique
+  idpId       String
+  idpName     String
+  verifiedAt  DateTime
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+/// แบบประกันตัวอย่าง ไม่ใช่ผลิตภัณฑ์จริง
+model InsurancePlan {
+  id            String        @id
+  name          String
+  summary       String
+  /// ชื่อไอคอนที่แอปใช้แสดง เช่น accident, health, travel
+  icon          String
+  yearlyPremium Int
+  sumInsured    Int
+  minAge        Int
+  maxAge        Int
+  sortOrder     Int           @default(0)
+  benefits      PlanBenefit[]
+  policies      Policy[]
+}
+
+model PlanBenefit {
+  id       Int           @id @default(autoincrement())
+  position Int
+  text     String
+  planId   String
+  plan     InsurancePlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@unique([planId, position])
+}
+
+/// กรมธรรม์จำลองที่ผู้ใช้ซื้อ ไม่มีผลทางกฎหมาย
+model Policy {
+  id                  Int           @id @default(autoincrement())
+  number              String        @unique
+  beneficiaryName     String
+  beneficiaryRelation String
+  paymentMethod       String
+  startDate           DateTime
+  endDate             DateTime
+  createdAt           DateTime      @default(now())
+  userId              Int
+  user                User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planId              String
+  plan                InsurancePlan @relation(fields: [planId], references: [id])
+
+  @@index([userId])
+}
