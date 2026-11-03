@@ -1,0 +1,355 @@
+<title>NDID Verify LOSE Test Report</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anuphan:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column (report), flow lanes break out wider; status encoded as pills + check marks */
+:root {
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --ink: #14171f;
+  --muted: #5d6573;
+  --line: #e3e6ec;
+  --accent: #2447d8;
+  --accent-soft: #eef1fd;
+  --pass: #0f8a45;
+  --pass-soft: #e7f5ed;
+  --warn: #9a6200;
+  --warn-soft: #fbf2e0;
+  --fail: #c62f2f;
+  --code-bg: #eceef3;
+  --f-display: "Anuphan", "IBM Plex Sans Thai", "Noto Sans Thai", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans Thai", "Noto Sans Thai", "Leelawadee UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --radius: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1218; --surface: #171b23; --ink: #e8ebf1; --muted: #9aa3b2; --line: #272d38;
+    --accent: #8ea4ff; --accent-soft: #1c2440; --pass: #4cc584; --pass-soft: #12291d;
+    --warn: #e2b252; --warn-soft: #2b2312; --fail: #ff7a7a; --code-bg: #1f2430; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1218; --surface: #171b23; --ink: #e8ebf1; --muted: #9aa3b2; --line: #272d38;
+  --accent: #8ea4ff; --accent-soft: #1c2440; --pass: #4cc584; --pass-soft: #12291d;
+  --warn: #e2b252; --warn-soft: #2b2312; --fail: #ff7a7a; --code-bg: #1f2430; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--f-body);
+  font-size: 15.5px; line-height: 1.7;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 980px; margin: 0 auto; padding-block: 40px 72px; display: grid; gap: 56px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; line-height: 1.3; margin: 0; }
+h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 700; }
+h2 { font-size: 23px; font-weight: 600; }
+h3 { font-size: 17px; font-weight: 600; }
+p { margin: 0; max-width: 68ch; }
+code, .mono { font-family: var(--f-mono); font-size: 0.86em; }
+code { background: var(--code-bg); padding: 1px 6px; border-radius: 6px; overflow-wrap: anywhere; }
+.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.muted { color: var(--muted); }
+section { display: grid; gap: 18px; min-width: 0; }
+.section-head { display: grid; gap: 6px; }
+
+/* header */
+header { display: grid; gap: 14px; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px 18px; color: var(--muted); font-size: 13.5px; }
+.meta span { display: inline-flex; gap: 6px; align-items: baseline; }
+.meta b { color: var(--ink); font-weight: 500; font-family: var(--f-mono); font-size: 12.5px; }
+
+/* verdict */
+.verdict { display: grid; grid-template-columns: auto 1fr; gap: 22px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px 24px; }
+.verdict .seal { width: 64px; height: 64px; border-radius: 50%; background: var(--pass-soft); color: var(--pass); display: grid; place-items: center; }
+.verdict .big { font-family: var(--f-display); font-size: 22px; font-weight: 600; }
+.stats { display: flex; flex-wrap: wrap; gap: 10px 28px; margin-top: 8px; }
+.stat { display: grid; }
+.stat .n { font-family: var(--f-display); font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.stat .l { font-size: 12.5px; color: var(--muted); }
+.stat.pass .n { color: var(--pass); }
+
+/* tables */
+.table-box { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: 0.03em; background: var(--bg); white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.num { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; font-family: var(--f-mono); }
+th.num { text-align: right; }
+td.id { font-family: var(--f-mono); font-weight: 500; color: var(--accent); white-space: nowrap; }
+tfoot td { font-weight: 600; background: var(--bg); }
+
+.pill { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 2px 9px; border-radius: 999px; white-space: nowrap; font-family: var(--f-body); }
+.pill.pass { background: var(--pass-soft); color: var(--pass); }
+.pill.warn { background: var(--warn-soft); color: var(--warn); }
+.pill.info { background: var(--accent-soft); color: var(--accent); }
+.pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+/* flow lanes */
+.lanes { display: grid; gap: 28px; }
+.lane { display: grid; gap: 12px; }
+.lane-head { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.lane-tag { font-family: var(--f-mono); font-size: 12px; font-weight: 500; color: var(--surface); background: var(--accent); padding: 1px 8px; border-radius: 6px; }
+.steps { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; scroll-snap-type: x proximity; }
+.step { flex: 0 0 132px; display: grid; gap: 6px; scroll-snap-align: start; align-content: start; }
+.step img { width: 132px; height: 293px; object-fit: cover; object-position: top; border-radius: 12px; border: 1px solid var(--line); display: block; background: var(--surface); }
+.step .cap { font-size: 12.5px; line-height: 1.45; }
+.step .by { font-family: var(--f-mono); font-size: 11px; color: var(--muted); }
+.arrow { flex: 0 0 auto; align-self: center; color: var(--muted); font-size: 18px; margin-top: -40px; }
+
+/* cards */
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.card ul { margin: 0; padding-left: 1.1em; display: grid; gap: 4px; }
+.card li { font-size: 14px; }
+
+.mut { display: grid; gap: 10px; }
+.mut-row { display: grid; grid-template-columns: 34px 1fr auto; gap: 14px; align-items: start; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; }
+.mut-row .k { font-family: var(--f-mono); font-weight: 500; color: var(--muted); }
+.mut-row .d { display: grid; gap: 2px; min-width: 0; }
+.mut-row .d small { color: var(--muted); font-size: 13px; }
+
+pre { margin: 0; background: var(--code-bg); border-radius: 10px; padding: 12px 14px; overflow-x: auto; font-family: var(--f-mono); font-size: 13px; line-height: 1.6; }
+.cmds { display: grid; gap: 10px; }
+.cmd { display: grid; gap: 6px; }
+.cmd .t { font-size: 13.5px; color: var(--muted); }
+
+a { color: var(--accent); }
+a:focus-visible, .steps:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 18px; }
+
+@media (max-width: 560px) {
+  .verdict { grid-template-columns: 1fr; }
+  .mut-row { grid-template-columns: 28px 1fr; }
+  .mut-row .pill { grid-column: 2; justify-self: start; }
+  th, td { padding: 10px 11px; }
+}
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">รายงานผลการทดสอบ · Test report</div>
+  <h1>NDID Verify LOSE: ผลทดสอบ E2E และ Unit ทุก flow</h1>
+  <p class="muted">สรุปการทดสอบแอป Flutter และเซิร์ฟเวอร์จำลอง (Express + Prisma + SQLite) ครอบคลุม flow ยืนยันตัวตน ซื้อประกัน และดูกรมธรรม์ ทั้งกรณีสำเร็จและกรณีผิดพลาด</p>
+  <div class="meta">
+    <span>วันที่ <b>3 พ.ย. 2569</b></span>
+    <span>Repo <b>suparerkly/NDID-MOBILE</b></span>
+    <span>Branch <b>test/e2e-flows</b></span>
+    <span>Commit <b>8edc4aa</b></span>
+    <span>Flutter <b>3.24.5</b> / Dart <b>3.5.4</b></span>
+    <span>Node <b>22.23</b></span>
+  </div>
+</header>
+
+<div class="verdict" role="status">
+  <div class="seal" aria-hidden="true">
+    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+  </div>
+  <div>
+    <div class="big">ผ่านทั้งหมด 87 จาก 87 เทสต์</div>
+    <p class="muted">ไม่มีเทสต์ล้มเหลว <code>flutter analyze</code> ไม่พบปัญหา และเมื่อลองใส่บั๊กเข้าไปในโค้ด 3 จุด เทสต์จับได้ครบทั้ง 3 จุด</p>
+    <div class="stats">
+      <div class="stat pass"><span class="n">87</span><span class="l">ผ่าน</span></div>
+      <div class="stat"><span class="n">0</span><span class="l">ล้มเหลว</span></div>
+      <div class="stat"><span class="n">13</span><span class="l">กรณี E2E flow</span></div>
+      <div class="stat"><span class="n">5</span><span class="l">endpoint ที่ทดสอบ</span></div>
+      <div class="stat"><span class="n">3/3</span><span class="l">บั๊กทดลองที่จับได้</span></div>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="section-head">
+    <div class="eyebrow">ชั้นการทดสอบ</div>
+    <h2>เทสต์ 5 ชุด ตั้งแต่ฟังก์ชันเล็ก ๆ ถึงแอปคุยกับเซิร์ฟเวอร์จริง</h2>
+  </div>
+  <div class="table-box">
+    <table>
+      <thead><tr><th>ชุดเทสต์</th><th>ที่อยู่</th><th>ทดสอบอะไร</th><th class="num">จำนวน</th><th>ผล</th></tr></thead>
+      <tbody>
+        <tr><td><b>E2E flow</b> <span class="pill info">ใหม่</span></td><td><code>test/e2e/</code></td><td>เปิดแอปจริงตั้งแต่หน้าแรก กดผ่าน UI ทุกขั้นจนซื้อประกัน ดูกรมธรรม์ และออกจากระบบ รวมกรณีผิดพลาด</td><td class="num">13</td><td><span class="pill pass">ผ่าน</span></td></tr>
+        <tr><td><b>Contract</b> <span class="pill info">ใหม่</span></td><td><code>test/contract/</code></td><td>โค้ดเรียก API ของแอป (<code>HttpAppApi</code>, <code>AppState</code>) คุยกับเซิร์ฟเวอร์จริง + Prisma + SQLite</td><td class="num">4</td><td><span class="pill pass">ผ่าน</span></td></tr>
+        <tr><td><b>Server API</b> <span class="pill info">ใหม่</span></td><td><code>server/test/</code></td><td>ทุก endpoint ทั้งกรณีสำเร็จ ข้อมูลไม่ถูกต้อง อายุไม่อยู่ในเกณฑ์ ไม่พบข้อมูล และ transaction</td><td class="num">25</td><td><span class="pill pass">ผ่าน</span></td></tr>
+        <tr><td><b>Unit</b></td><td><code>test/unit/</code></td><td>validator, liveness, YUV→NV21, model, <code>HttpAppApi</code> (mock HTTP), <code>AppState</code>, <code>MockNdidService</code> (เพิ่มใหม่ 23 จาก 36)</td><td class="num">36</td><td><span class="pill pass">ผ่าน</span></td></tr>
+        <tr><td><b>Widget</b></td><td><code>test/widget_test.dart</code></td><td>หน้าจอแต่ละหน้าแยกกัน (มีอยู่เดิม)</td><td class="num">9</td><td><span class="pill pass">ผ่าน</span></td></tr>
+      </tbody>
+      <tfoot><tr><td colspan="3">รวม</td><td class="num">87</td><td><span class="pill pass">ผ่าน</span></td></tr></tfoot>
+    </table>
+  </div>
+  <p class="muted">เวลาที่ใช้: <code>flutter test</code> ประมาณ 14 วินาที (58 เทสต์) · contract ประมาณ 10 วินาทีรวมเปิดเซิร์ฟเวอร์ · server API 0.34 วินาที</p>
+</section>
+
+<section>
+  <div class="section-head">
+    <div class="eyebrow">Flow ที่ครอบคลุม</div>
+    <h2>เส้นทางของผู้ใช้ และเทสต์ที่ตรวจแต่ละขั้น</h2>
+    <p class="muted">ภาพหน้าจอจาก <code>docs/screens</code> ของโปรเจกต์ รหัสใต้ภาพคือกรณีทดสอบในตารางถัดไป เลื่อนแต่ละแถวไปด้านข้างได้</p>
+  </div>
+  <div class="lanes">
+    <div class="lane">
+      <div class="lane-head"><span class="lane-tag">A</span><h3>ยืนยันตัวตน</h3></div>
+      <div class="steps" tabindex="0" aria-label="ขั้นตอน flow A">
+        <div class="step"><img src="{{a1_welcome}}" alt="หน้ายินยอม"><span class="cap">ยินยอมใช้กล้อง</span><span class="by">A1</span></div>
+        <span class="arrow" aria-hidden="true">→</span>
+        <div class="step"><img src="{{a5_form_filled}}" alt="ฟอร์มข้อมูลส่วนตัว"><span class="cap">กรอกข้อมูล ตรวจเลขบัตร เบอร์ อีเมล</span><span class="by">A2 A3 A6</span></div>
+        <span class="arrow" aria-hidden="true">→</span>
+        <div class="step"><img src="{{a7_provider_selected}}" alt="เลือกธนาคาร"><span class="cap">เลือกธนาคารสมมติ</span><span class="by">A4 C2</span></div>
+        <span class="arrow" aria-hidden="true">→</span>
+        <div class="step"><img src="{{a10_success_popup}}" alt="ยืนยันตัวตนสำเร็จ"><span class="cap">สแกนใบหน้า → popup สำเร็จ</span><span class="by">A4 A5</span></div>
+      </div>
+    </div>
+    <div class="lane">
+      <div class="lane-head"><span class="lane-tag">B</span><h3>ซื้อประกัน</h3></div>
+      <div class="steps" tabindex="0" aria-label="ขั้นตอน flow B">
+        <div class="step"><img src="{{b2_plans}}" alt="รายการแบบประกัน"><span class="cap">เลือกแบบ ตรวจเกณฑ์อายุ</span><span class="by">B3 B4</span></div>
+        <span class="arrow" aria-hidden="true">→</span>
+        <div class="step"><img src="{{b6_purchase_filled}}" alt="ฟอร์มซื้อประกัน"><span class="cap">ผู้รับผลประโยชน์ วิธีชำระ เงื่อนไข</span><span class="by">B1</span></div>
+        <span class="arrow" aria-hidden="true">→</span>
+        <div class="step"><img src="{{b8_purchased}}" alt="ซื้อสำเร็จ"><span class="cap">ยืนยันชำระ → ซื้อสำเร็จ</span><span class="by">B1 B2</span></div>
+      </div>
+    </div>
+    <div class="lane">
+      <div class="lane-head"><span class="lane-tag">C</span><h3>กรมธรรม์และออกจากระบบ</h3></div>
+      <div class="steps" tabindex="0" aria-label="ขั้นตอน flow C">
+        <div class="step"><img src="{{c2_policies}}" alt="รายการกรมธรรม์"><span class="cap">รายการเรียงล่าสุดก่อน</span><span class="by">C1</span></div>
+        <span class="arrow" aria-hidden="true">→</span>
+        <div class="step"><img src="{{c3_policy_detail}}" alt="รายละเอียดกรมธรรม์"><span class="cap">รายละเอียดกรมธรรม์</span><span class="by">C1</span></div>
+        <span class="arrow" aria-hidden="true">→</span>
+        <div class="step"><img src="{{a1_welcome}}" alt="กลับหน้าแรกหลังออกจากระบบ"><span class="cap">ออกจากระบบ แล้วกลับมาใหม่</span><span class="by">C2 C3</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <div class="eyebrow">E2E flow · test/e2e/app_flow_e2e_test.dart</div>
+    <h2>กรณีทดสอบ E2E ทั้ง 13 กรณี</h2>
+  </div>
+  <div class="table-box">
+    <table>
+      <thead><tr><th>รหัส</th><th>สถานการณ์</th><th>สิ่งที่ตรวจ</th><th>ผล</th></tr></thead>
+      <tbody>
+        <tr><td class="id">A1</td><td>ยังไม่ยินยอม</td><td>ปุ่ม "เริ่มยืนยันตัวตน" กดไม่ได้จนกว่าจะติ๊กยินยอม และกลับเป็นกดไม่ได้เมื่อเอาติ๊กออก</td><td><span class="pill pass">ผ่าน</span></td></tr>
+        <tr><td class="id">A2</td><td>กรอกฟอร์มผิดทุกช่อง</td><td>แสดง error ครบ 6 ช่อง (ชื่อ นามสกุล เลขบัตรผิด checksum วันเกิด เบอร์ 02 อีเมลไม่มีโดเมน) และไม่ไปหน้าถัดไป</td><td><span class="pill pass">ผ่าน</span></td></tr>
+        <tr><td class="id">A3</td><td>วางเลขบัตรที่มีขีด</td><td>ช่องรับเฉพาะตัวเลขไม่เกิน 13 หลัก</td><td><span class="pill pass">ผ่าน</span></td></tr>
+        <tr><td class="id">A4</td><td>ยืนยันตัวตนสำเร็จ</td><td>เลือก "นางสาว" และวันเกิดจากปฏิทิน เลือกธนาคาร บี → popup แสดงชื่อ เลขบัตรปิดบัง ธนาคาร และเลขอ้างอิง <code>SIM-xxxxxx</code> → เมนูหลัก ย้อนกลับไม่ได้ ส่ง <code>idp-b</code> ไปเซิร์ฟเวอร์</td><td><span class="pill pass">ผ่าน</span></td></tr>
+        <tr><td class="id">A5</td><td>บันทึกผลไม่สำเร็จ</td><td>แสดง snackbar ยังอยู่หน้าสแกน กดลองใหม่แล้วสำเร็จ</td><td><span class="pill pass">ผ่าน</span></td></tr>
+        <tr><td class="id">A6</td><td>ย้อนกลับจากหน้าเลือกธนาคาร</td><td>ข้อมูลในฟอร์มยังอยู่ครบ</td><td><span class="pill pass">ผ่าน</span></td></tr>
+        <tr><td class="id">B1</td><td>ซื้อประกันเดินทาง</td><td>ไม่กรอก → error · กรอกแต่ไม่ยอมรับเงื่อนไข → ไม่เปิดหน้ายืนยัน · เลือก "บุตร" และ Mobile Banking · กดยกเลิกครั้งแรก → ยังไม่ซื้อ · ยืนยัน → เลขกรมธรรม์ <code>TR-ปี-000001</code> เบี้ย 690 บาท → เมนูหลักแสดง "1 ฉบับ"</td><td><span class="pill pass">ผ่าน</span></td></tr>
+        <tr><td class="id">B2</td><td>เซิร์ฟเวอร์ปฏิเสธ (422)</td><td>แสดงข้อความอายุไม่อยู่ในเกณฑ์ ยังอยู่หน้าซื้อ ปุ่มกดได้อีก ลองใหม่แล้วสำเร็จ</td><td><span class="pill pass">ผ่าน</span></td></tr>
+        <tr><td class="id">B3</td><td>ผู้ใช้อายุ 11 ปี</td><td>เลือกวันเกิดผ่านปฏิทิน ทั้ง 3 แบบขึ้น "อายุไม่อยู่ในเกณฑ์รับประกัน" และไม่มีปุ่มซื้อ</td><td><span class="pill pass">ผ่าน</span></td></tr>
+        <tr><td class="id">B4</td><td>ผู้ใช้อายุ 19 ปี</td><td>ซื้อประกันอุบัติเหตุ (18–70) ได้ แต่ประกันสุขภาพ (20–60) ไม่ได้</td><td><span class="pill pass">ผ่าน</span></td></tr>
+        <tr><td class="id">C1</td><td>ดูกรมธรรม์</td><td>รายการว่าง → ซื้อ 2 ฉบับ → เรียงล่าสุดก่อน → รายละเอียดแสดงเลขที่ ทุนประกัน 500,000 บาท และผู้รับผลประโยชน์</td><td><span class="pill pass">ผ่าน</span></td></tr>
+        <tr><td class="id">C2</td><td>ออกจากระบบแล้วกลับมา</td><td>กลับหน้าแรก ติ๊กยินยอมถูกล้าง ยืนยันใหม่ด้วยเลขบัตรเดิมผ่านธนาคาร ซี ได้กรมธรรม์เดิมคืน</td><td><span class="pill pass">ผ่าน</span></td></tr>
+        <tr><td class="id">C3</td><td>เปลี่ยนเป็นคนอื่น</td><td>คนใหม่ (เลขบัตรใหม่) ไม่เห็นกรมธรรม์ของคนก่อน "0 ฉบับ"</td><td><span class="pill pass">ผ่าน</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <div class="eyebrow">Server API · server/test/api.test.js</div>
+    <h2>เซิร์ฟเวอร์ทดสอบกับฐานข้อมูลจริง 25 กรณี</h2>
+  </div>
+  <div class="table-box">
+    <table>
+      <thead><tr><th>Endpoint</th><th>กรณีที่ทดสอบ</th><th class="num">จำนวน</th><th>ผล</th></tr></thead>
+      <tbody>
+        <tr><td><code>GET /api/health</code>, <code>OPTIONS</code></td><td>ตอบ ok · preflight 204 พร้อม header CORS</td><td class="num">2</td><td><span class="pill pass">ผ่าน</span></td></tr>
+        <tr><td><code>GET /api/plans</code></td><td>3 แบบเรียง PA, HL, TR พร้อมสิทธิประโยชน์ ไม่ส่งฟิลด์ภายใน</td><td class="num">1</td><td><span class="pill pass">ผ่าน</span></td></tr>
+        <tr><td><code>POST /api/verifications</code></td><td>สร้างผู้ใช้ 201 · เลขบัตรเดิมได้ userId เดิมและอัปเดตข้อมูล · ข้อมูลผิด 6 แบบ → 400 · JSON เสีย → 400 · referenceId ซ้ำ → 500 และ transaction ไม่ทิ้งผู้ใช้ค้าง</td><td class="num">10</td><td><span class="pill pass">ผ่าน</span></td></tr>
+        <tr><td><code>POST /api/users/:id/policies</code></td><td>ซื้อสำเร็จ เลขที่ <code>PA-ปี-6หลัก</code> คุ้มครอง 1 ปี · อายุ 19 ซื้อ HL → 422 · อายุ 72 ซื้อ PA → 422 แต่ TR ได้ · ไม่พบผู้ใช้/แบบ → 404 · ไม่มีผู้รับผลประโยชน์ → 400</td><td class="num">6</td><td><span class="pill pass">ผ่าน</span></td></tr>
+        <tr><td><code>GET /api/users/:id/policies</code></td><td>เรียงล่าสุดก่อน · ผู้ใช้ใหม่ได้รายการว่าง · userId ผิด 4 แบบ (abc, 0, -1, 1.5) → 400</td><td class="num">6</td><td><span class="pill pass">ผ่าน</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <div class="eyebrow">ตรวจว่าเทสต์จับบั๊กได้จริง</div>
+    <h2>ใส่บั๊กทดลอง 3 จุด แล้วรัน E2E</h2>
+    <p class="muted">แก้โค้ดแอปให้ผิดทีละจุด รันเทสต์ แล้วคืนโค้ดเดิม เพื่อยืนยันว่าเทสต์ไม่ได้ผ่านไปเฉย ๆ</p>
+  </div>
+  <div class="mut">
+    <div class="mut-row"><span class="k">M1</span><div class="d"><span>กรมธรรม์ใหม่ไปต่อท้ายรายการ แทนที่จะอยู่บนสุด</span><small><code>lib/services/app_state.dart</code> · C1 ล้มเหลว</small></div><span class="pill pass">จับได้</span></div>
+    <div class="mut-row"><span class="k">M2</span><div class="d"><span>ชำระเงินได้โดยไม่ต้องยอมรับเงื่อนไข</span><small><code>lib/screens/purchase_screen.dart</code> · รอบแรกจับไม่ได้ จึงเพิ่มการตรวจใน B1 แล้วรันซ้ำ B1 ล้มเหลวตามที่ควร</small></div><span class="pill pass">จับได้</span></div>
+    <div class="mut-row"><span class="k">M3</span><div class="d"><span>หลังยืนยันตัวตนยังย้อนกลับไปหน้าเดิมได้</span><small><code>lib/screens/verification_result.dart</code> · E2E ล้มเหลว 4 กรณี</small></div><span class="pill pass">จับได้</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <div class="eyebrow">ข้อจำกัด</div>
+    <h2>สิ่งที่เทสต์ชุดนี้ยังไม่ครอบคลุม</h2>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <h3><span class="pill warn">ต้องใช้เครื่องจริง</span></h3>
+      <ul>
+        <li>กล้องและ ML Kit ตรวจใบหน้าจริง เครื่องเทสต์ไม่มีกล้อง E2E จึงใช้ปุ่ม "ข้ามการสแกน" (มีเฉพาะ debug build) ส่วนตรรกะ liveness ทดสอบแยกใน unit test</li>
+        <li><code>integration_test/</code> เดิมรันได้เฉพาะบนอีมูเลเตอร์หรือเครื่องจริง ครั้งนี้ไม่ได้รัน</li>
+        <li>ยังไม่ได้ build Android, iOS และเว็บ</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><span class="pill warn">ยังไม่มีเทสต์</span></h3>
+      <ul>
+        <li>หน้าตรวจใบหน้าเวอร์ชันเว็บ (<code>face_scan_screen_web.dart</code>)</li>
+        <li>กรณีเซิร์ฟเวอร์ไม่ตอบภายใน 10 วินาที (timeout)</li>
+        <li>เลขกรมธรรม์ที่สุ่มซ้ำแล้วต้องสุ่มใหม่</li>
+        <li>E2E ใช้ <code>FakeAppApi</code> ในหน่วยความจำ ส่วนการคุยกับเซิร์ฟเวอร์จริงอยู่ในชุด contract</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <div class="eyebrow">การเปลี่ยนแปลงใน repo</div>
+    <h2>สิ่งที่แก้ไขเพื่อให้ทดสอบได้</h2>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <h3>เซิร์ฟเวอร์</h3>
+      <ul>
+        <li>แยกแอป Express ไปไว้ที่ <code>src/app.js</code> ส่วน <code>server.js</code> เหลือแค่เปิดพอร์ต พฤติกรรม API เหมือนเดิม</li>
+        <li><code>schema.prisma</code> อ่านที่อยู่ฐานข้อมูลจาก <code>DATABASE_URL</code> ค่าเริ่มต้นอยู่ใน <code>server/.env</code> (ยังเป็น <code>dev.db</code> เหมือนเดิม)</li>
+        <li><code>scripts/with-test-db.js</code> สร้าง SQLite ชั่วคราวใหม่ทุกรอบแล้วลบทิ้ง จึงไม่แตะ <code>dev.db</code></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>แอป</h3>
+      <ul>
+        <li>ไม่ได้แก้โค้ดใน <code>lib/</code></li>
+        <li>ย้าย unit test เดิม 3 ไฟล์ไปไว้ที่ <code>test/unit/</code></li>
+        <li>เพิ่ม <code>tool/test_contract.sh</code> และหัวข้อ "การทดสอบ" ใน README</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <div class="eyebrow">วิธีรัน</div>
+    <h2>คำสั่งสำหรับรันเทสต์เอง</h2>
+  </div>
+  <div class="cmds">
+    <div class="cmd"><span class="t">Unit, widget และ E2E flow ของแอป</span><pre>flutter test</pre></div>
+    <div class="cmd"><span class="t">แอปกับเซิร์ฟเวอร์จริง (สคริปต์เปิดเซิร์ฟเวอร์และฐานข้อมูลเทสต์ให้เอง)</span><pre>./tool/test_contract.sh</pre></div>
+    <div class="cmd"><span class="t">API ของเซิร์ฟเวอร์</span><pre>npm --prefix server test</pre></div>
+  </div>
+</section>
+
+<footer>
+  โค้ดทั้งหมดอยู่ที่ branch <a href="https://github.com/suparerkly/NDID-MOBILE/tree/test/e2e-flows">test/e2e-flows</a> ของ suparerkly/NDID-MOBILE · แอปนี้เป็นการจำลองเพื่อสาธิต ไม่ได้เชื่อมต่อระบบ NDID จริง
+</footer>
+
+</div>

@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: add-e2e-dropdown-case
+expected_outcome: |
+  Adds a new case to test/e2e/app_flow_e2e_test.dart using the existing helpers, runs it, and it passes.
